@@ -1,7 +1,9 @@
 options(scipen=999)
 
 
-#importing packages
+# #importing packages
+library(dotenv)
+load_dot_env()
 library(twitteR)
 library(writexl)
 library(bitops)
@@ -13,11 +15,11 @@ library(quanteda)
 library(quanteda.textstats)
 library(quanteda.textplots)
 
-########### Set up Twitter Authentication
-consumer_key<-"prS9FHK98u2oXWovwWhSeokK7" #API KEY from twitter
-consumer_secret<-"xuUjL35UhQ2XpzIljIKgQ9X8sBo6rHeR2udxLcBNIdBHEXXvd0" #API KEY SECRET from twitter
-access_token<-"1459047015078322187-mfcEOirMRg0rTzsP6fGk2UVoN54wTD" #Access token from twitter
-access_token_secret<-"5ta1xAhrM90DWXzmT5yzWGRxpvhOEV65DiWml7zo8g9cg" #Access token secret from twitter
+# ########### Set up Twitter Authentication
+consumer_key<-Sys.getenv("CONSUMER_KEY") #API KEY from twitter
+consumer_secret<-Sys.getenv("CONSUMER_SECRET") #API KEY SECRET from twitter
+access_token<-Sys.getenv("ACCESS_TOKEN") #Access token from twitter
+access_token_secret<-Sys.getenv("ACCESS_TOKEN_SECRET") #Access token secret from twitter
 
 #TwitteR Function
 setup_twitter_oauth(consumer_key,consumer_secret,access_token,access_token_secret)
@@ -81,7 +83,7 @@ Tweets_Sentiment<-sentiment(Tweets_Scrape_Results$text)
 # Adding the tweet polarity column to your dataframe
 Tweets_Scrape_Results$polarity <- Tweets_Sentiment$polarity
 
-#extract results 
+#extract results
 write_xlsx(Tweets_Scrape_Results,'Tweets_Scrape_Results.xlsx')
 
 
@@ -116,7 +118,7 @@ freq <- textstat_frequency(our_matrix)
 head(freq,20)
 write_xlsx(freq,'Tweets_Scrape_Word_Freq.xlsx')
 
-############ Visualisations 
+############ Visualisations
 
 set.seed(42)
 
@@ -150,7 +152,7 @@ textplot_xray(
 
 
 # Only select tweets by CNN Breaking News and NY Times as they are the most followed twitter news accounts
-NEWS_corpus <- corpus_subset(our_corpus, 
+NEWS_corpus <- corpus_subset(our_corpus,
                             screenName %in% c("cnnbrk", "nytimes"))
 
 # Create a dfm grouped by selected companies
@@ -163,4 +165,4 @@ NEWS_dfm <- tokens(NEWS_corpus, remove_punct = TRUE) %>%
 result_keyness <- textstat_keyness(NEWS_dfm, target = "nytimes")
 
 # Plot estimated word keyness
-textplot_keyness(result_keyness) 
+textplot_keyness(result_keyness)
